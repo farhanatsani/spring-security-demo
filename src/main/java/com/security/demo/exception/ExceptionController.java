@@ -7,6 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -43,7 +45,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
 
-        return exceptionHandler(status, ((ServletWebRequest) request).getRequest().getRequestURI(), errors);
+        return exceptionHandler(status, "", errors);
     }
     @ExceptionHandler(EntityExistsException.class)
     ResponseEntity<Object> entityExistsExceptionHandler(WebRequest request, EntityExistsException ex){
@@ -52,5 +54,13 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     ResponseEntity<Object> nullPointerExceptionHandler(WebRequest request, NullPointerException ex){
         return exceptionHandler(HttpStatus.NOT_FOUND, ((ServletWebRequest) request).getRequest().getRequestURI(), ex.getMessage());
+    }
+    @ExceptionHandler(AuthenticationServiceException.class)
+    ResponseEntity<Object> authenticationExceptionHandler(WebRequest request, NullPointerException ex){
+        return exceptionHandler(HttpStatus.UNAUTHORIZED, ((ServletWebRequest) request).getRequest().getRequestURI(), ex.getMessage());
+    }
+    @ExceptionHandler(UsernameNotFoundException.class)
+    ResponseEntity<Object> usernameNotFoundExceptionHandler(WebRequest request, NullPointerException ex){
+        return exceptionHandler(HttpStatus.UNAUTHORIZED, ((ServletWebRequest) request).getRequest().getRequestURI(), ex.getMessage());
     }
 }

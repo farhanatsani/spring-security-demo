@@ -17,7 +17,8 @@ public class UserController {
     @GetMapping("/profile/{username}")
     public ResponseEntity<?> getUser(@PathVariable String username) {
         User user = userServiceImpl.findByUsername(username);
-        return ResponseEntity.ok(user);
+        UserProfileDTO userProfile = UserMapper.toUserProfileDTO(user);
+        return ResponseEntity.ok(userProfile);
     }
     @PostMapping("/registration")
     public ResponseEntity<?> registrationUser(@RequestBody @Valid RegistrationUserRequestDTO registrationUserRequestDTO) {
