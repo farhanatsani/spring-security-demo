@@ -1,6 +1,7 @@
 package com.security.demo.user.impl;
 
 import com.security.demo.base.ResponseMessage;
+import com.security.demo.user.GrantedAuthorityImpl;
 import com.security.demo.user.User;
 import com.security.demo.user.UserRepository;
 import com.security.demo.user.UserService;
@@ -46,11 +47,22 @@ public class UserServiceImpl implements UserService {
         return userOptional.get();
     }
     @Override
-    public User loginByUsernameOrPassword(String userParam) {
+    public User findByUsernameOrPassword(String userParam) {
         Optional<User> userLoginOptional = userRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(userParam, userParam);
         if(userLoginOptional.isEmpty()) {
             throw new UsernameNotFoundException(ResponseMessage.USER_NOT_FOUND + ": " + userParam);
         }
         return userLoginOptional.get();
+    }
+    @Override
+    public User addAuthority(String userParam, String authority) {
+        Optional<User> userOptional = userRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(userParam, userParam);
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException(ResponseMessage.USER_NOT_FOUND + ": " + userParam);
+        }
+        userOptional.get()
+                .getAuthorities()
+                .add(GrantedAuthorityImpl.builder().authority(authority).build());
+        return userRepository.save(userOptional.get());
     }
 }

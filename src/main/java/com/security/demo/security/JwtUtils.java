@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Base64Utils;
 
 import java.util.Date;
 
@@ -32,17 +31,11 @@ public class JwtUtils {
                 .compact();
     }
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token.replace("Bearer ", ""))
-                .getBody().getAudience();
-    }
-    public boolean isValidJwt(String authToken) {
         try {
-            Jwts.parser()
+            return Jwts.parser()
                     .setSigningKey(jwtSecret)
-                    .parseClaimsJws(authToken.replace("Bearer ", ""));
-            return true;
+                    .parseClaimsJws(token)
+                    .getBody().getAudience();
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -54,7 +47,7 @@ public class JwtUtils {
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
-        return false;
+        return "";
     }
 
 }

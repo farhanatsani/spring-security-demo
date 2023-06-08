@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,5 +28,15 @@ public class UserController {
         RegistrationUserResponseDTO responseDTO = UserMapper.toRegistrationUserResponseDTO(userSave);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(responseDTO);
+    }
+    // https://www.baeldung.com/spring-security-expressions
+    @PreAuthorize("hasAnyAuthority('USER_ADMIN')")
+    @PostMapping("/grant-authorities/{username}")
+    public ResponseEntity<?> grantAuthority(@PathVariable String username,
+                                            @RequestParam String authority) {
+
+        User user = userServiceImpl.addAuthority(username, authority);
+        UserProfileDTO userProfile = UserMapper.toUserProfileDTO(user);
+        return ResponseEntity.ok(userProfile);
     }
 }

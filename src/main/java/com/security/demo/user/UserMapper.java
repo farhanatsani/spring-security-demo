@@ -17,6 +17,7 @@ public class UserMapper {
                         GrantedAuthorityImpl.builder().authority("USER_MOBILE").build()
                 ))
                 .accountNonExpired(true)
+                .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .enabled(true)
                 .build();

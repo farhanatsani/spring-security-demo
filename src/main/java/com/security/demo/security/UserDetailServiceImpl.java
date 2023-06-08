@@ -13,6 +13,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private UserService userServiceImpl;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userServiceImpl.loginByUsernameOrPassword(username);
+        return userServiceImpl.findByUsernameOrPassword(username);
     }
 }

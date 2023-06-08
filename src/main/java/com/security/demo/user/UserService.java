@@ -4,5 +4,6 @@ public interface UserService {
     User save(User user);
     User findByUsername(String username);
     User findByEmail(String email);
-    User loginByUsernameOrPassword(String userParam);
+    User findByUsernameOrPassword(String userParam);
+    User addAuthority(String userParam, String authority);
 }
