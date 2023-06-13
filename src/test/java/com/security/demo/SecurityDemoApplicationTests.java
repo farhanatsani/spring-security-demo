@@ -35,8 +35,9 @@ class SecurityDemoApplicationTests {
 	@WithMockUser("john")
 	@Test
 	public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
-		mvc.perform(get("/api/v1/users/profile/john")
+		String result = mvc.perform(get("/api/v1/users/profile/john")
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+		System.out.println(result);
 	}
 }

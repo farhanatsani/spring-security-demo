@@ -28,7 +28,7 @@ public class UserMapper {
                 .id(user.getId().toString())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .email(user.getLastName())
+                .email(user.getEmail())
                 .username(user.getUsername())
                 .build();
         return responseDTO;
@@ -39,7 +39,7 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getLastName())
-                .username(user.getUsername())
+                .username(user.getEmail())
                 .authorities(user.getAuthorities())
                 .accountNonExpired(user.isAccountNonExpired())
                 .accountNonLocked(user.isAccountNonLocked())

@@ -2,10 +2,12 @@ package com.security.demo.security;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 import java.util.Date;
 
@@ -27,13 +29,13 @@ public class JwtUtils {
                 .setSubject("Demo jwt")
                 .setIssuedAt(currentDate)
                 .setExpiration(new Date((currentDate).getTime() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS512, Base64Utils.encode(jwtSecret.getBytes()))
                 .compact();
     }
     public String getUserNameFromJwtToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(jwtSecret)
+                    .setSigningKey(Base64Utils.encode(jwtSecret.getBytes()))
                     .parseClaimsJws(token)
                     .getBody().getAudience();
         } catch (SignatureException e) {
