@@ -1,7 +1,12 @@
 package com.security.demo.security;
 
+import com.security.demo.base.ResponseMessage;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +20,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
+import java.util.Date;
 
 /**
  * @author farhan
  */
+@Slf4j
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 	@Autowired
 	private JwtUtils jwtUtils;
 	@Value("${jwtSecret}")
 	private String jwtSecret;
+	@Autowired
+	private RedisTemplate redisTemplate;
 	@Autowired
 	private UserDetailsService userDetailsServiceImpl;
 	@Override
@@ -34,6 +44,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		String bearerToken = request.getHeader("Authorization");
 		if (bearerToken != null) {
 			String token = bearerToken.replace("Bearer ", "");
+
+			String md5Hex = DigestUtils.md5Hex(token).toUpperCase();
+			log.info("md5Hex {}", md5Hex);
+
+			Date tokenDigestInRedis = (Date) redisTemplate.opsForValue()
+					.get(md5Hex);
+
+
 			String username = jwtUtils.getUserNameFromJwtToken(token);
 			try {
 				UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
