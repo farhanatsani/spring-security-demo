@@ -45,15 +45,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		if (bearerToken != null) {
 			String token = bearerToken.replace("Bearer ", "");
 
-			String md5Hex = DigestUtils.md5Hex(token).toUpperCase();
-			log.info("md5Hex {}", md5Hex);
-
-			if(redisTemplate.hasKey(md5Hex)) {
-				throw new AuthenticationServiceException(ResponseMessage.TOKEN_IS_INVALID);
-			}
-
-			String username = jwtUtils.getUserNameFromJwtToken(token);
 			try {
+				String md5Hex = DigestUtils.md5Hex(token).toUpperCase();
+				if(redisTemplate.hasKey(md5Hex)) {
+					log.info("md5Hex available on redis {}, token was logout", md5Hex);
+					throw new AuthenticationServiceException(ResponseMessage.TOKEN_IS_INVALID);
+				}
+
+				String username = jwtUtils.getUserNameFromJwtToken(token);
 				UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
 
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
