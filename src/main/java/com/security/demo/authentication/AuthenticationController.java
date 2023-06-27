@@ -5,7 +5,6 @@ import com.security.demo.security.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,6 +32,7 @@ public class AuthenticationController {
     private JwtUtils jwtUtils;
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthenticationRequestDTO login) {
+        log.info("LoginController");
         Authentication authentication = authenticationProviderImpl.authenticate(new UsernamePasswordAuthenticationToken(
                 login.getUsername(), login.getPassword())
         );
